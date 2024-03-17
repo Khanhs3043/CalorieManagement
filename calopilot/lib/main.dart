@@ -1,15 +1,28 @@
-import 'package:calopilot/screens/addScreen.dart';
-import 'package:calopilot/screens/homeScreen.dart';
-import 'package:calopilot/screens/mainScreen.dart';
+import 'package:calopilot/screens/loginScreen.dart';
+import 'package:calopilot/screens/siginScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'dart:io';
 import 'models/myColor.dart';
 
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
-  runApp(const CaloPilot());
+  Platform.isAndroid ?
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+          apiKey: 'AIzaSyCs11_NkkMjt_8LBru0iOqSV_eAH3K-C-k',  // current_key
+          appId: '1:255174626591:android:39cd442f84f0b80a19342a',  // mobilesdk_app_id
+          messagingSenderId: '255174626591',  // project_number
+          projectId: 'calopilot'  // project_id
+      )
+  ) : await Firebase.initializeApp();
+
+  runApp(CaloPilot());
+
 }
+
 class CaloPilot extends StatefulWidget {
   const CaloPilot({super.key});
 
@@ -24,11 +37,11 @@ class _CaloPilotState extends State<CaloPilot> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context)=> MyUI()),
-       //ChangeNotifierProvider(create: (context)=>())
+        //ChangeNotifierProvider(create: (context)=>())
       ],
       child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: MainScreen()
+          debugShowCheckedModeBanner: false,
+          home:LoginScreen()
       ),
     );
   }
