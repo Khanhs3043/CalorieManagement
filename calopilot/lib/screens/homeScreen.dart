@@ -1,13 +1,46 @@
 
 
+import 'package:calopilot/models/food.dart';
+import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
 import 'package:calopilot/screens/addScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/home_food.dart';
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
+  HomeScreen({super.key});
+  var listFoodLog = [
+    FoodLog(userID: '', food: Food(
+        name: "Bánh mì",
+        carbs: 12,
+        fats: 2,
+        protein: 2,
+        amountOfServing: 30,
+        kcal: 120,
+        nameOfServing: "cái"
+    ),
+        quantity: 36),
+    FoodLog(userID: '', food: Food(
+        name: "Thịt chó",
+        carbs: 12,
+        fats: 12,
+        protein: 32,
+        amountOfServing: 100,
+        kcal: 200,
+        nameOfServing: "cái"
+    ),
+        quantity: 36),
+    FoodLog(userID: '', food: Food(
+        name: "Kim chi",
+        carbs: 4,
+        fats: 1,
+        protein: 5,
+        amountOfServing: 30,
+        kcal: 120,
+        nameOfServing: "cái"
+    ),
+        quantity: 100),
+  ];
   @override
   Widget build(BuildContext context) {
     return Consumer<MyUI>(
@@ -142,9 +175,12 @@ class HomeScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: ui.color4
                     ),),
-                    HomeFood(food: "thịt lợn",infor: '30g - 120 kcal'),
-                    HomeFood(food: "thịt lợn",infor: '30g - 120 kcal'),
-                    HomeFood(food: "thịt chó",infor: '30g - 120 kcal'),
+                    listFoodLog.isEmpty?const SizedBox():
+                    Column(
+                        children:listFoodLog.map(
+                                (foodLog) => HomeFood(
+                                foodLog: foodLog)).toList()),
+
                     const SizedBox(height: 20,)
 
                   ],

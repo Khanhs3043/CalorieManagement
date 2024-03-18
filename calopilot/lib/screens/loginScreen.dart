@@ -1,12 +1,11 @@
 import 'package:calopilot/screens/forgotPwScreen.dart';
-import 'package:calopilot/screens/homeScreen.dart';
 import 'package:calopilot/screens/siginScreen.dart';
 import 'package:calopilot/widgets/tf_email.dart';
 import 'package:calopilot/widgets/tf_password.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../widgets/fb_auth.dart';
+import 'mainScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontSize: 40,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Toboto'
                 ),),
               SizedBox(height: 40),
               MyTextField(
@@ -83,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),);
+                      MaterialPageRoute(builder: (context) => MainScreen()),);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text("Có lỗi đăng nhập."),
