@@ -1,12 +1,13 @@
 import 'package:calopilot/models/myColor.dart';
+import 'package:calopilot/services/dbHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 class SearchItem extends StatefulWidget {
   String title;
   String info;
-
   final Function onTap;
-  SearchItem({super.key, required this.title, required this.info, required this.onTap});
+  final Function onDelete;
+  SearchItem({super.key, required this.title, required this.info, required this.onTap, required this.onDelete()});
 
   @override
   State<SearchItem> createState() => _SearchItemState();
@@ -64,7 +65,8 @@ class _SearchItemState extends State<SearchItem> {
                                 actionsAlignment: MainAxisAlignment.center,
                                 title: const Text("Delete this item?",textAlign: TextAlign.center ,style: TextStyle(fontSize: 20),),
                                 actions: [
-                                  TextButton(onPressed: (){
+                                  TextButton(onPressed: ()async{
+                                    await widget.onDelete();
                                     Navigator.pop(context);
                                   }, child: Text("OK")),
                                   TextButton(onPressed: (){Navigator.pop(context);},
@@ -78,6 +80,7 @@ class _SearchItemState extends State<SearchItem> {
                   GestureDetector(
                     onTap: (){
                       setState(() {
+
                         isAdd = isAdd? false: true;
                       });
                     },

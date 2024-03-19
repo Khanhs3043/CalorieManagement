@@ -1,9 +1,13 @@
-import 'dart:ffi';
-import 'dart:math';
+
 
 import 'package:calopilot/models/myColor.dart';
+import 'package:calopilot/services/dbHelper.dart';
+import 'package:calopilot/utils/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../models/food.dart';
+import '../provider/myState.dart';
 
 class CreateNewFoodSceen extends StatefulWidget {
   const CreateNewFoodSceen({super.key});
@@ -15,7 +19,7 @@ class CreateNewFoodSceen extends StatefulWidget {
 class _CreateNewFoodSceenState extends State<CreateNewFoodSceen> {
   bool gr = true;
   bool ml = false;
-  double kcal = 0;
+  int kcal = 0;
   TextEditingController nameCon = TextEditingController();
   TextEditingController servingCon = TextEditingController();
   TextEditingController nameOfServingCon = TextEditingController();
@@ -23,13 +27,13 @@ class _CreateNewFoodSceenState extends State<CreateNewFoodSceen> {
   TextEditingController fatCon = TextEditingController();
   TextEditingController proteinCon = TextEditingController();
   TextEditingController kcalCon = TextEditingController();
-  double carb = 0;
-  double fat = 0;
-  double pro = 0;
+  int carb = 0;
+  int fat = 0;
+  int pro = 0;
   @override
   Widget build(BuildContext context) {
-    return Consumer<MyUI>(
-      builder: (context, ui, child){
+    return Consumer2<MyUI,MyState>(
+      builder: (context, ui,state, child){
       return Scaffold(
         backgroundColor: ui.color2,
         appBar: AppBar(
@@ -195,9 +199,9 @@ class _CreateNewFoodSceenState extends State<CreateNewFoodSceen> {
                                   width: 70,
                                   child: TextField(
                                     onChanged: (val){
-                                      fat =fatCon.text.isEmpty?0: double.parse(fatCon.text);
-                                      carb =carbCon.text.isEmpty?0: double.parse(carbCon.text);
-                                      pro =proteinCon.text.isEmpty?0: double.parse(proteinCon.text);
+                                      fat =fatCon.text.isEmpty?0: int.parse(fatCon.text);
+                                      carb =carbCon.text.isEmpty?0: int.parse(carbCon.text);
+                                      pro =proteinCon.text.isEmpty?0: int.parse(proteinCon.text);
                                       kcal =carb*4 + fat*9 + pro*4;
                                       setState(() {
 
@@ -231,9 +235,9 @@ class _CreateNewFoodSceenState extends State<CreateNewFoodSceen> {
                                   width: 70,
                                   child: TextField(
                                     onChanged: (val){
-                                      fat =fatCon.text.isEmpty?0: double.parse(fatCon.text);
-                                      carb =carbCon.text.isEmpty?0: double.parse(carbCon.text);
-                                      pro =proteinCon.text.isEmpty?0: double.parse(proteinCon.text);
+                                      fat =fatCon.text.isEmpty?0: int.parse(fatCon.text);
+                                      carb =carbCon.text.isEmpty?0: int.parse(carbCon.text);
+                                      pro =proteinCon.text.isEmpty?0: int.parse(proteinCon.text);
                                       kcal =carb*4 + fat*9 + pro*4;
                                       setState(() {
                                         kcalCon.text = kcal.toString();
@@ -266,9 +270,9 @@ class _CreateNewFoodSceenState extends State<CreateNewFoodSceen> {
                                   width: 70,
                                   child: TextField(
                                     onChanged: (val){
-                                      fat =fatCon.text.isEmpty?0: double.parse(fatCon.text);
-                                      carb =carbCon.text.isEmpty?0: double.parse(carbCon.text);
-                                      pro =proteinCon.text.isEmpty?0: double.parse(proteinCon.text);
+                                      fat =fatCon.text.isEmpty?0: int.parse(fatCon.text);
+                                      carb =carbCon.text.isEmpty?0: int.parse(carbCon.text);
+                                      pro =proteinCon.text.isEmpty?0: int.parse(proteinCon.text);
                                       kcal =carb*4 + fat*9 + pro*4;
                                       setState(() {
                                         kcalCon.text = kcal.toString();
@@ -293,7 +297,7 @@ class _CreateNewFoodSceenState extends State<CreateNewFoodSceen> {
                           child: Center(
                             child: Column(
                               children: [
-                                Text('Kcal',
+                                const Text('Kcal',
                                   style: TextStyle(
                                       fontSize: 18,
                                       color:Color(0xff7e7e7f)
@@ -327,12 +331,34 @@ class _CreateNewFoodSceenState extends State<CreateNewFoodSceen> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
-                child: ElevatedButton(onPressed: (){},
+                child: ElevatedButton(onPressed: ()async{
+                  Food food = Food(
+                    name: nameCon.text,
+                    nameOfServing: nameOfServingCon.text,
+                    amountOfServing: int.parse(servingCon.text),
+                    carbs: int.parse(carbCon.text),
+                    fats: int.parse(fatCon.text),
+                    protein: int.parse(proteinCon.text),
+                    kcal: int.parse(kcalCon.text),
+                    userID: state.user.id
+                  );
+                  try{
+                    print(food.userID);
+                    food.id = await DbHelper.createFood(food);
+                    Utils.showSnackbar(context, "Add new food successfully!");
+                    Navigator.pop(context);
+                    state.isChanged;
+                    state.updateState();
+                  }catch(er){
+                    Utils.showSnackbar(context, er.toString());
+                  }
+
+                },
                     style: ButtonStyle(
-                        padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 50)),
+                        padding: const MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 50)),
                         backgroundColor: MaterialStatePropertyAll(ui.color5)
                     ),
-                    child: Text('Done',
+                    child: const Text('Done',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white

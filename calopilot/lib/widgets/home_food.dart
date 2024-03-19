@@ -1,6 +1,7 @@
 import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
 import 'package:calopilot/screens/foodLogInfoScreen.dart';
+import 'package:calopilot/services/dbHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +11,7 @@ class HomeFood extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    foodLog.calc();
+
     return GestureDetector(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodLogInfoScreen(foodLog: foodLog,)));
@@ -50,7 +51,32 @@ class HomeFood extends StatelessWidget {
                 ),
               ],
             ),
-            IconButton(onPressed: (){}, icon: Icon(Icons.cancel_rounded,size: 25,color: Color(0xffadadae),),)
+            IconButton(onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Notify"),
+                    content: Text("You want to delete?"),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: ()async {
+                          await DbHelper.deleteFoodLog(foodLog.id);
+                        },
+                        child: Text('OK'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Cancel'),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+            }, icon: Icon(Icons.cancel_rounded,size: 25,color: Color(0xffadadae),),)
           ],
         ),
       ),

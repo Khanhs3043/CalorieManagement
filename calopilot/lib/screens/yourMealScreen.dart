@@ -1,10 +1,16 @@
 
 
 import 'package:calopilot/models/myColor.dart';
+import 'package:calopilot/provider/myState.dart';
 import 'package:calopilot/screens/createNewFood.dart';
+import 'package:calopilot/screens/foodInfoScreen.dart';
+import 'package:calopilot/services/dbHelper.dart';
 import 'package:calopilot/widgets/searchItem.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../models/food.dart';
+
 
 class YourMealScreen extends StatefulWidget {
   const YourMealScreen({super.key});
@@ -12,11 +18,11 @@ class YourMealScreen extends StatefulWidget {
   @override
   State<YourMealScreen> createState() => _YourMealScreenState();
 }
-
 class _YourMealScreenState extends State<YourMealScreen> {
-  List<String> listfoods=['thịt chó', 'thịt gà', 'thịt bò','thịt vit', 'thịt chuột','a','b','c','d','e','f','g','h','i','j','k'];
-  List<String> foods=[];
+  List<Food> listfoods = [];
+  List<Food> foods=[];
   TextEditingController searchController = TextEditingController();
+
   void search(String query){
     if(query.isEmpty) {
       setState(() {
@@ -24,33 +30,44 @@ class _YourMealScreenState extends State<YourMealScreen> {
       });
     } else {
       setState(() {
-      foods = listfoods.where((e) => e.toLowerCase().contains(query.toLowerCase())).toList();
+      foods = listfoods.where((e) => e.name.toLowerCase().contains(query.toLowerCase())).toList();
     });
     }
   }
   @override
-  void initState() {
+  didChangeDependencies(){
+    super.didChangeDependencies();
+    getYourFoods();
+  }
+
+  Future getYourFoods()async{
+    listfoods = await DbHelper.getAllUserFoods(Provider.of<MyState>(context).user.id);
     search('');
-    super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    return Consumer<MyUI>(builder: (context, ui, child){
+    return Consumer2<MyUI, MyState>(builder: (context, ui,state, child){
       return Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 20,right: 20,top:80),
-              child: foods.isEmpty? Center(child: Text('food not exist'),):ListView.builder(
+              padding: const EdgeInsets.only(left: 20,right: 20,top:120),
+              child: foods.isEmpty? Center(child: Text('food not exist'),)
+                  :ListView.builder(
                 itemCount: foods.isEmpty? listfoods.length: foods.length,
                 itemBuilder: (context, index) {
-                  final item = foods.isEmpty?null:foods[index];
+                  final food = foods.isEmpty?null:foods[index];
                   return SearchItem(
-                      title: item!,
-                      info: 'info',
+                      onDelete: ()async{
+                        await DbHelper.deleteFood(food.id);
+                        state.updateState();
+                      },
+                      title: food!.name,
+                      info: '${food.amountOfServing}g - ${food.kcal} kcal',
                       onTap: (){
-                        print('tap ${item} ');
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodInfoScreen(food: food)));
+                        print('tap ${food.name}  ${food.id}');
                       });
                 },
               ),
@@ -106,7 +123,7 @@ class _YourMealScreenState extends State<YourMealScreen> {
                 child: IconButton(onPressed: (){
                   Navigator.push(context, MaterialPageRoute(builder: (conext)=>CreateNewFoodSceen()));
                 },
-                  icon: Icon(Icons.add,size: 30,color: Colors.white,),))
+                  icon: const Icon(Icons.add,size: 30,color: Colors.white,),))
           ],
         ),
       );

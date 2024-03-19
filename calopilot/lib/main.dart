@@ -1,3 +1,4 @@
+import 'package:calopilot/provider/myState.dart';
 import 'package:calopilot/screens/loginScreen.dart';
 import 'package:calopilot/screens/siginScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -37,7 +38,7 @@ class _CaloPilotState extends State<CaloPilot> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context)=> MyUI()),
-        //ChangeNotifierProvider(create: (context)=>())
+        ChangeNotifierProvider(create: (context)=>MyState())
       ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,

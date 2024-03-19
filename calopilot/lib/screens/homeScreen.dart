@@ -1,46 +1,48 @@
 
-
 import 'package:calopilot/models/food.dart';
 import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
+import 'package:calopilot/provider/myState.dart';
 import 'package:calopilot/screens/addScreen.dart';
+import 'package:calopilot/services/dbHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/home_food.dart';
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
-  var listFoodLog = [
-    FoodLog(userID: '', food: Food(
-        name: "Bánh mì",
-        carbs: 12,
-        fats: 2,
-        protein: 2,
-        amountOfServing: 30,
-        kcal: 120,
-        nameOfServing: "cái"
-    ),
-        quantity: 36),
-    FoodLog(userID: '', food: Food(
-        name: "Thịt chó",
-        carbs: 12,
-        fats: 12,
-        protein: 32,
-        amountOfServing: 100,
-        kcal: 200,
-        nameOfServing: "cái"
-    ),
-        quantity: 36),
-    FoodLog(userID: '', food: Food(
-        name: "Kim chi",
-        carbs: 4,
-        fats: 1,
-        protein: 5,
-        amountOfServing: 30,
-        kcal: 120,
-        nameOfServing: "cái"
-    ),
-        quantity: 100),
-  ];
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int eaten = 0;
+  int remaining =0;
+  int burned = 0;
+  int protein = 0;
+  int carbs = 0;
+  int fats = 0;
+  int goal = 2000;
+  var listFoodLog = [];
+
+  @override
+  didChangeDependencies(){
+    super.didChangeDependencies();
+    getYourFoodLogs();
+
+  }
+  Future  getYourFoodLogs()async{
+     listFoodLog = await DbHelper.getAllFoodLogs(Provider.of<MyState>(context,listen: false).user.id);
+     setState(() {
+     });
+     for(FoodLog i in listFoodLog){
+       carbs += i.carbs;
+       fats += i.fats;
+       protein += i.protein;
+       eaten += i.kcal;
+       remaining = goal -eaten+ burned;
+     }
+  }
   @override
   Widget build(BuildContext context) {
     return Consumer<MyUI>(
@@ -48,7 +50,8 @@ class HomeScreen extends StatelessWidget {
       return Scaffold(
           floatingActionButton: FloatingActionButton(
             shape: const CircleBorder(),
-          onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context)=>AddScreen()));},
+          onPressed: ()async {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>AddScreen()));},
           backgroundColor: ui.color3,
           foregroundColor: const Color(0xffadadae),
           child: const Icon(Icons.add,size: 30,),
@@ -68,13 +71,13 @@ class HomeScreen extends StatelessWidget {
                        children: [
                          Column(
                            children: [
-                             Stack(
+                              Stack(
                                alignment: Alignment.center,
                                children: [
                                  SizedBox(height: 55,
                                    width: 55,
                                    child: CircularProgressIndicator(
-                                     value: 0.2,
+                                     value:  carbs/100,
                                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xff37718c)),
                                      backgroundColor: Color(0xffadadae),
                                      strokeCap: StrokeCap.round,
@@ -84,7 +87,7 @@ class HomeScreen extends StatelessWidget {
                                  Text('Carbs'),
                                ]
                              ),
-                             Text('30/100'),
+                             Text('$carbs/100'),
                            ],
                          ),
                          Column(
@@ -95,7 +98,7 @@ class HomeScreen extends StatelessWidget {
                                    SizedBox(height: 55,
                                      width: 55,
                                      child: CircularProgressIndicator(
-                                       value: 0.2,
+                                       value: protein/55,
                                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xff37718c)),
                                        backgroundColor: Color(0xffadadae),
                                        strokeCap: StrokeCap.round,
@@ -105,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                                    Text('Protein'),
                                  ]
                              ),
-                             Text('30/150'),
+                             Text('$protein/150'),
                            ],
                          ),
                          Column(
@@ -116,7 +119,7 @@ class HomeScreen extends StatelessWidget {
                                    SizedBox(height: 55,
                                      width: 55,
                                      child: CircularProgressIndicator(
-                                       value: 0.2,
+                                       value: fats/55,
                                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xff37718c)),
                                        backgroundColor: Color(0xffadadae),
                                        strokeCap: StrokeCap.round,
@@ -126,7 +129,7 @@ class HomeScreen extends StatelessWidget {
                                    Text('Fats'),
                                  ]
                              ),
-                             Text('8/55'),
+                             Text('$fats/55'),
                            ],
                          ),
                        ],
@@ -181,7 +184,7 @@ class HomeScreen extends StatelessWidget {
                                 (foodLog) => HomeFood(
                                 foodLog: foodLog)).toList()),
 
-                    const SizedBox(height: 20,)
+                    const SizedBox(height: 50,)
 
                   ],
                   ),
@@ -223,7 +226,7 @@ class HomeScreen extends StatelessWidget {
                               fontSize: 16,
                               color: ui.color4
                           ),),
-                          Text('350',style: TextStyle(
+                          Text('$eaten',style: TextStyle(
                               fontSize: 35,
                               fontWeight: FontWeight.bold,
                               color: ui.color4
@@ -236,16 +239,16 @@ class HomeScreen extends StatelessWidget {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              const SizedBox(height: 110,width: 110,
+                               SizedBox(height: 110,width: 110,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 8,
                                   strokeCap: StrokeCap.round,
-                                  value: 350/1700,
+                                  value: remaining/goal,
                                   backgroundColor: Color(0xffadadae),
                                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xff84E291)),
                                 ),
                               ),
-                              Text('1350',style: TextStyle(
+                              Text('$remaining',style: TextStyle(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: ui.color4
@@ -266,7 +269,7 @@ class HomeScreen extends StatelessWidget {
                               fontSize: 16,
                               color: ui.color4
                           ),),
-                          Text('200',style: TextStyle(
+                          Text('$burned',style: TextStyle(
                               fontSize: 35,
                               fontWeight: FontWeight.bold,
                               color: ui.color4

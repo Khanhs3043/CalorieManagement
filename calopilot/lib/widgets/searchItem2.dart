@@ -6,7 +6,8 @@ class SearchItem2 extends StatefulWidget {
   String info;
 
   final Function onTap;
-  SearchItem2({super.key, required this.title, required this.info, required this.onTap});
+  final Function onAdd;
+  SearchItem2({super.key, required this.title, required this.info, required this.onTap, required this.onAdd});
 
   @override
   State<SearchItem2> createState() => _SearchItemState();
@@ -57,6 +58,7 @@ class _SearchItemState extends State<SearchItem2> {
                   GestureDetector(
                       onTap: (){
                         setState(() {
+                          widget.onAdd();
                           isAdd = isAdd? false: true;
                         });
                       },

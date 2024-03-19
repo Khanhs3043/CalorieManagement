@@ -1,8 +1,13 @@
+import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
+import 'package:calopilot/provider/myState.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/food.dart';
+import '../services/dbHelper.dart';
 import '../widgets/searchItem2.dart';
+import 'foodInfoScreen.dart';
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
 
@@ -11,8 +16,8 @@ class AddScreen extends StatefulWidget {
 }
 
 class _AddScreenState extends State<AddScreen> {
-  List<String> listfoods=['thịt chó', 'thịt gà', 'thịt bò','thịt vit', 'thịt chuột','a','b','c','d','e','f','g','h','i','j','k'];
-  List<String> foods=[];
+  List<Food> listfoods = [];
+  List<Food> foods=[];
   TextEditingController searchController = TextEditingController();
   void search(String query){
     if(query.isEmpty) {
@@ -21,14 +26,18 @@ class _AddScreenState extends State<AddScreen> {
       });
     } else {
       setState(() {
-        foods = listfoods.where((e) => e.toLowerCase().contains(query.toLowerCase())).toList();
+        foods = listfoods.where((e) => e.name.toLowerCase().contains(query.toLowerCase())).toList();
       });
     }
   }
   @override
   void initState() {
-    search('');
+    getAllFoods();
     super.initState();
+  }
+  Future getAllFoods()async{
+    listfoods = await DbHelper.getAllFoods();
+    search('');
   }
   @override
   Widget build(BuildContext context) {
@@ -86,13 +95,16 @@ class _AddScreenState extends State<AddScreen> {
           child: foods.isEmpty? Center(child: Text('food not exist'),):ListView.builder(
             itemCount: foods.isEmpty? listfoods.length: foods.length,
             itemBuilder: (context, index) {
-              final item = foods.isEmpty?null:foods[index];
+              final food = foods.isEmpty?null:foods[index];
               return SearchItem2(
-                  title: item!,
-                  info: 'info',
+                  title: food!.name,
+                  info: '${food.amountOfServing}g - ${food.kcal} kcal',
                   onTap: (){
-                    print('tap ${item} ');
-                  });
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodInfoScreen(food: food)));
+                  }, onAdd: ()async{
+                    FoodLog foodLog = FoodLog(userID: Provider.of<MyState>(context,listen: false).user.id, food: food);
+                    await DbHelper.createFoodLog(foodLog);
+              },);
             },
           ),
         ),

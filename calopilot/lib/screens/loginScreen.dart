@@ -1,10 +1,13 @@
+import 'package:calopilot/provider/myState.dart';
 import 'package:calopilot/screens/forgotPwScreen.dart';
 import 'package:calopilot/screens/siginScreen.dart';
 import 'package:calopilot/widgets/tf_email.dart';
 import 'package:calopilot/widgets/tf_password.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/fb_auth.dart';
+import '../models/user.dart';
 import 'mainScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -75,7 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       emailController.text, passwordController.text);
 
                   if (user != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    Provider.of<MyState>(context,listen:false).user.id = user.uid.toString();
+                    ScaffoldMessenger.of(context,).showSnackBar(const SnackBar(
                       content: Text("Đã đăng nhập thành công."),
                     ));
 

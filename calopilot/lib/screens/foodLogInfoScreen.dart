@@ -22,9 +22,10 @@ class _FoodLogInfoScreenState extends State<FoodLogInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Provider.of<MyUI>(context).color5,
         foregroundColor: Provider.of<MyUI>(context).color1,
-        title: Text('title'),
+        title: Text(widget.foodLog.food.name),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 20),

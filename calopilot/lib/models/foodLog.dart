@@ -1,6 +1,7 @@
 import 'food.dart';
 
 class FoodLog{
+  int id;
   int quantity;
   Food food;
   int kcal;
@@ -12,15 +13,17 @@ class FoodLog{
 
   FoodLog({
     required this.userID,
+    this.id = 0,
     this.kcal =  0,
     required this.food,
     this.quantity = 0,
     this.recordAt
 });
   calc(){
-    kcal = food.kcal * quantity~/food.amountOfServing;
-    carbs = food.carbs * quantity~/food.amountOfServing;
-    fats = food.fats * quantity~/food.amountOfServing;
-    protein = food.protein * quantity~/food.amountOfServing;
+    quantity = food.amountOfServing;
+    kcal = (food.kcal * quantity/food.amountOfServing).round();
+    carbs = (food.carbs * quantity/food.amountOfServing).round();
+    fats = (food.fats * quantity/food.amountOfServing).round();
+    protein = (food.protein * quantity/food.amountOfServing).round();
   }
 }
