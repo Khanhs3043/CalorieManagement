@@ -43,7 +43,7 @@ class HomeFood extends StatelessWidget {
                       color: Provider.of<MyUI>(context).color4,
                     ),),
                     Text(
-                      "${foodLog.quantity} - ${foodLog.kcal} kcal",
+                      "${foodLog.quantity}g - ${foodLog.kcal} kcal",
                       style: TextStyle(
                       fontSize: 16,
                       color: Color(0xffadadae),

@@ -20,10 +20,11 @@ class FoodLog{
     this.recordAt
 });
   calc(){
+    if(food.amountOfServing>0){
     quantity = food.amountOfServing;
     kcal = (food.kcal * quantity/food.amountOfServing).round();
     carbs = (food.carbs * quantity/food.amountOfServing).round();
     fats = (food.fats * quantity/food.amountOfServing).round();
     protein = (food.protein * quantity/food.amountOfServing).round();
-  }
+  }}
 }

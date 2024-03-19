@@ -1,5 +1,7 @@
 import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
+import 'package:calopilot/provider/myState.dart';
+import 'package:calopilot/services/dbHelper.dart';
 import 'package:calopilot/widgets/nutritionChart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +42,17 @@ class _FoodLogInfoScreenState extends State<FoodLogInfoScreen> {
                       child: Card(
                         child: Center(
                           child: TextField(
+                            onChanged: (val){
+                              widget.foodLog.quantity= int.parse(val);
+                              widget.foodLog.calc();
+                                setState(() {
+
+
+                                });
+                            },
                             textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              border: InputBorder.none
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
                             ),
                             controller: quantityController,
                           ),
@@ -70,7 +80,12 @@ class _FoodLogInfoScreenState extends State<FoodLogInfoScreen> {
               const SizedBox(height: 30,),
               NutritionChart(carbs: widget.foodLog.carbs,fats: widget.foodLog.fats,protein: widget.foodLog.protein,kcal:widget.foodLog.kcal ,),
               const SizedBox(height: 50,),
-              ElevatedButton(onPressed: (){},
+              ElevatedButton(onPressed: ()async{
+                widget.foodLog.quantity = int.parse(quantityController.text);
+                await DbHelper.updateFoodLog(widget.foodLog);
+                Navigator.of(context).pop();
+                Provider.of<MyState>(context,listen: false).updateState();
+              },
                 style: const ButtonStyle(
                   padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 50,vertical: 10)),
                   backgroundColor: MaterialStatePropertyAll(Color(0xff82c9ea))

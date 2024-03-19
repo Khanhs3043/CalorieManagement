@@ -1,12 +1,16 @@
 import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
 import 'package:calopilot/provider/myState.dart';
+import 'package:calopilot/screens/createNewFood.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/exercise.dart';
 import '../models/food.dart';
 import '../services/dbHelper.dart';
+import '../widgets/searchItem.dart';
 import '../widgets/searchItem2.dart';
+import 'createNewExerciseScreen.dart';
 import 'foodInfoScreen.dart';
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -16,8 +20,10 @@ class AddScreen extends StatefulWidget {
 }
 
 class _AddScreenState extends State<AddScreen> {
+  bool isFood = true;
   List<Food> listfoods = [];
   List<Food> foods=[];
+  List<Exercise> listEx = [];
   TextEditingController searchController = TextEditingController();
   void search(String query){
     if(query.isEmpty) {
@@ -31,30 +37,38 @@ class _AddScreenState extends State<AddScreen> {
     }
   }
   @override
-  void initState() {
+  didChangeDependencies(){
+    super.didChangeDependencies();
     getAllFoods();
-    super.initState();
+    getAllEx();
+
   }
+
   Future getAllFoods()async{
     listfoods = await DbHelper.getAllFoods();
     search('');
   }
+  Future getAllEx()async{
+    listEx = await DbHelper.getAllExercises();
+    search('');
+  }
   @override
   Widget build(BuildContext context) {
-    return Consumer<MyUI>(builder: (context, ui, child){
+
+    return Consumer2<MyUI,MyState>(builder: (context, ui,state, child){
       return Scaffold(
         appBar: AppBar(
 
           bottom:  PreferredSize(preferredSize: Size(MediaQuery.sizeOf(context).width -40, 30),
           child: Container(
-              margin: EdgeInsets.only(bottom: 10,),
+              margin: const EdgeInsets.only(bottom: 10,),
               width: MediaQuery.sizeOf(context).width -40,
               height: 35,
               child: SearchBar(
                 controller: searchController,
                 backgroundColor: MaterialStatePropertyAll(ui.color1),
                 hintText: 'Search...',
-                hintStyle: MaterialStatePropertyAll(TextStyle(color: Color(0xff545859),fontWeight: FontWeight.normal)),
+                hintStyle: const MaterialStatePropertyAll(TextStyle(color: Color(0xff545859),fontWeight: FontWeight.normal)),
                 textStyle:  MaterialStatePropertyAll(TextStyle(color: ui.color4)),
                 leading: const Icon(Icons.search,color: Color(0xff545859),),
                 trailing:[
@@ -65,7 +79,7 @@ class _AddScreenState extends State<AddScreen> {
                           search('');
                         });
                       },
-                      child: Icon(Icons.cancel)
+                      child: const Icon(Icons.cancel)
                   )
                 ],
                 onChanged: (query){
@@ -73,26 +87,40 @@ class _AddScreenState extends State<AddScreen> {
                 },
               )
           )),
-          title: Center(
-              child: DropdownButton<String>(
-                underline: Container(),
-                value: 'dinner',
-                dropdownColor: const Color(0xff155f82),
-                items: const [
-                  DropdownMenuItem(child: Text('Dinner'),value: 'dinner',),
-                  DropdownMenuItem(child: Text('Breakfast'),value: 'breakfast',),
-                  DropdownMenuItem(child: Text('Lunch'),value: 'lunch',)
-                ], onChanged: (value) {  },
-              ),
+          centerTitle: true,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+              const Icon(Icons.directions_walk_outlined),
+              const SizedBox(width: 3,),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Switch(
+                  activeColor: Colors.white,
+                  value: isFood,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isFood = value;
+                    });
+                  },
+
+                ),
+              ),const SizedBox(width: 5,),
+              const Icon(Icons.fastfood_outlined),
+            ],
           ),
           backgroundColor: const Color(0xff155f82),
           foregroundColor: Colors.white,
-          actions: [IconButton(onPressed: () {  }, icon: Icon(Icons.add),)],
+          actions: [IconButton(onPressed: () {
+            isFood?Navigator.push(context, MaterialPageRoute(builder: (context)=>CreateNewFoodSceen())):
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>CreateNewExerciseSceen()));
+          }, icon: const Icon(Icons.add),)],
         ),
         backgroundColor: ui.color2,
-        body: Padding(
+        body: isFood?Padding(
           padding: const EdgeInsets.only(left: 20,right: 20),
-          child: foods.isEmpty? Center(child: Text('food not exist'),):ListView.builder(
+          child: foods.isEmpty? const Center(child: Text('food not exist'),):ListView.builder(
             itemCount: foods.isEmpty? listfoods.length: foods.length,
             itemBuilder: (context, index) {
               final food = foods.isEmpty?null:foods[index];
@@ -108,7 +136,58 @@ class _AddScreenState extends State<AddScreen> {
               },);
             },
           ),
-        ),
+        ):
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+              child: listEx.isEmpty? const Center(child: Text('exercise not exist'),):
+              ListView.builder(
+                itemCount: listEx.isEmpty? listEx.length: listEx.length,
+                itemBuilder: (BuildContext context, int index) {
+
+                  var exercise = listEx[index];
+                  return SearchItem(
+                      title: exercise.name,
+                      info: '${exercise.duration} min - ${exercise.kcalPerMin} kcal',
+                      onTap: (){
+                        showModalBottomSheet(context: context, builder: (context){
+                          return Container(
+                            padding: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+                            height: 300,
+                            width: MediaQuery.sizeOf(context).width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: ui.color2,
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: MediaQuery.sizeOf(context).width-30,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: ui.color1
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text('${exercise.name}'),
+                                      Text('${exercise.duration} min - ${exercise.kcalPerMin} kcal')
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        });
+                      },
+                      onAdd: ()async{
+                        //await DbHelper.a
+                      },
+                    onDelete: () async{
+                        await DbHelper.deleteExercise(exercise.id);
+
+                        state.updateState();
+                    },);
+                },),
+            )
       );
     });
   }

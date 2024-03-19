@@ -16,9 +16,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
+  var listExLog = [];
   var listFoodLog = [];
-
+  int goal = 2000;
   @override
   didChangeDependencies(){
     super.didChangeDependencies();
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int protein = 0;
     int carbs = 0;
     int fats = 0;
-    int goal = 2000;
+
     for(FoodLog i in listFoodLog){
       carbs += i.carbs;
       fats += i.fats;
@@ -176,17 +176,89 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                     const SizedBox(height: 20,),
-                    Text(' Lunch',style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: ui.color4
-                    ),),
+
                     listFoodLog.isEmpty?const SizedBox():
                     Column(
-                        children:listFoodLog.map(
-                                (foodLog) => HomeFood(
-                                foodLog: foodLog)).toList()),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(' Eaten',style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: ui.color4
+                        ),),
+                        Column(
+                            children:listFoodLog.map(
+                                    (foodLog) => HomeFood(
+                                    foodLog: foodLog)).toList()),
+                      ],
+                    ),
+                    const SizedBox(height: 20,),
+                    listExLog.isEmpty?const SizedBox():
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(' Exercise',style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: ui.color4
+                        ),),
+                        Column(
+                            children:listExLog.map(
+                                    (exLog) => Stack(
+                                      alignment: Alignment.centerRight,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(exLog.food.name,style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Provider.of<MyUI>(context).color4,
+                                                ),),
+                                                Text(
+                                                  "${exLog.quantity}min - ${exLog.kcal} kcal",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Color(0xffadadae),
+                                                  ),),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        IconButton(onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text("Notify"),
+                                                content: const Text("You want to delete?"),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: ()async {
+                                                      await DbHelper.deleteFoodLog(exLog.id);
+                                                      Provider.of<MyState>(context,listen: false).updateState();
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('OK'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
 
+                                        }, icon: Icon(Icons.cancel_rounded,size: 25,color: Color(0xffadadae),),)
+                                      ],
+                                    ),).toList()),
+                      ],
+                    ),
                     const SizedBox(height: 50,)
 
                   ],
@@ -248,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   strokeCap: StrokeCap.round,
                                   value: (goal - remaining)/goal,
                                   backgroundColor: Color(0xffadadae),
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xff84E291)),
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff84E291)),
                                 ),
                               ),
                               Text('$remaining',style: TextStyle(

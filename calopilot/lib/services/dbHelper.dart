@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:calopilot/models/exLog.dart';
+import 'package:calopilot/models/exercise.dart';
 import "package:flutter/foundation.dart";
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
@@ -247,6 +249,7 @@ class DbHelper{
     for (var i in listFoodLogs){
       i.calc();
     }
+    print(listFoodLogs.length);
     return listFoodLogs;
   }
   static Future<int> createFoodLog(FoodLog foodLog) async {
@@ -288,9 +291,6 @@ class DbHelper{
         'foodId': foodLog.food.id,
         'recordAt': foodLog.recordAt?.millisecondsSinceEpoch,
         'userID': foodLog.userID,
-        'carbs': foodLog.carbs,
-        'fats': foodLog.fats,
-        'protein': foodLog.protein,
       },
       where: 'id = ?',
       whereArgs: [foodLog.id],
@@ -302,6 +302,87 @@ class DbHelper{
       await db.delete('foodLogs', where: "id = ?", whereArgs: [id]);
     } catch (err) {
       debugPrint("Co loi khi xoa food log: $err");
+    }
+  }
+//about exercise -----------------------------------------------------------------------------------
+  static Future<int> createExercise(Exercise exercise) async {
+    final db = await DbHelper.mDatabase();
+    final data = {
+      'name' : exercise.name,
+      'kcalPerMin' : exercise.kcalPerMin,
+      'duration': exercise.duration,
+      'userId': exercise.userID
+    };
+    final id = await db.insert('Exercises', data,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+  static Future<List<Exercise>> getAllExercises() async {
+
+    List<Exercise> listExercise = [];
+    final db = await DbHelper.mDatabase();
+    List<Map<String, dynamic>> data = await db.query('exercises');
+    for (var ex in data) {
+      listExercise.add(Exercise(
+        id: ex["id"],
+        name: ex["name"],
+        kcalPerMin: ex["kcalPerMin"],
+        userID: ex["userID"],
+        duration: ex["duration"]
+      ));
+    }
+    return listExercise;
+  }
+  static Future<List<Exercise>> getAllUserExercises(String userId) async {
+    List<Exercise> listExercise = [];
+    final db = await DbHelper.mDatabase();
+    List<Map<String, dynamic>> data = await db.query('exercises',where: 'userID = ?', whereArgs: [userId]);
+    for (var ex in data) {
+      listExercise.add(Exercise(
+          id: ex["id"],
+          name: ex["name"],
+          kcalPerMin: ex["kcalPerMin"],
+          userID: ex["userID"],
+          duration: ex["duration"]
+      ));
+    }
+    return listExercise;
+  }
+  static Future<Exercise> getExerciseById(int id) async {
+    final db = await DbHelper.mDatabase();
+    var data = await db.query('exercises', where: 'id = ?', whereArgs: [id]);
+    if (data.isNotEmpty) {
+      var ex = data.first;
+      return Exercise(
+        id: ex["id"] as int,
+        name: ex["name"] as String,
+        kcalPerMin: ex["kcalPerMin"] as int,
+        duration: ex["duration"] as int,
+        userID: ex["userID"] as String?,
+      );
+    } else {// Trả về một đối tượng Food rỗng nếu không tìm thấy
+      return Exercise();
+    }
+  }
+
+
+  // static Future<int> updateExercise(Exercise exercise) async {
+  //   final db = await DbHelper.mDatabase();
+  //   return await db.update(
+  //     'foods',
+  //     food.toMap(),
+  //     where: 'id = ?',
+  //     whereArgs: [food.id],
+  //   );
+  // }
+
+  static Future<void> deleteExercise(int id) async {
+    final db = await DbHelper.mDatabase();
+    try {
+      await db.delete('Exercises', where: "id = ?", whereArgs: [id]);
+    } catch (err) {
+      debugPrint("Co loi khi xoa exercise: $err");
     }
   }
 }

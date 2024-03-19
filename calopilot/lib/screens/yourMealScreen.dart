@@ -68,7 +68,6 @@ class _YourMealScreenState extends State<YourMealScreen> {
                       info: '${food.amountOfServing}g - ${food.kcal} kcal',
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodInfoScreen(food: food)));
-                        print('tap ${food.name}  ${food.id}');
                       },
                     onAdd: ()async{
                       FoodLog foodLog = FoodLog(userID: Provider.of<MyState>(context,listen: false).user.id, food: food);

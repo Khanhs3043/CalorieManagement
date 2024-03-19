@@ -1,4 +1,6 @@
 import 'package:calopilot/screens/loginScreen.dart';
+import 'package:provider/provider.dart';
+import '../provider/myState.dart';
 import '../widgets/tf_confirm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +79,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   }
 
                   if (user != null) {
+                    Provider.of<MyState>(context,listen:false).user.id = user.uid.toString();
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text("Đã đăng ký thành công."),
                     ));
