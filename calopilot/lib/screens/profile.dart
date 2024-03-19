@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // ignore: unused_import
 import 'package:calopilot/models/myColor.dart';
+// ignore: unused_import
+import 'package:calopilot/screens/settingScreen.dart';
 
 class MyProfile extends StatelessWidget {
   const MyProfile({super.key});
@@ -34,22 +36,28 @@ class _MainProfile extends State<MainProfile> {
           // ignore: avoid_unnecessary_containers
           child: Container(
             padding: const EdgeInsets.all(20),
-            child: const Row(
+            child: Row(
               children: <Widget>[
-                Icon(
+                const Icon(
                   Icons.account_circle_rounded,
                   color: Colors.white,
                   size: 50,
                 ),
-                SizedBox(width: 20),
-                Text(
+                const SizedBox(width: 20),
+                const Text(
                   'User Name', // DOI TEN VOI DATABASE O DAY
                   style: TextStyle(color: Colors.white),
                 ),
-                Spacer(),
+                const Spacer(),
                 IconButton(
-                  onPressed: null,
-                  icon: Icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsScreen()),
+                    );
+                  },
+                  icon: const Icon(
                       color: Colors.white,
                       size: 50,
                       IconData(
