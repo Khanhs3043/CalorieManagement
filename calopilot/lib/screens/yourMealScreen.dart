@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/food.dart';
+import '../models/foodLog.dart';
 
 
 class YourMealScreen extends StatefulWidget {
@@ -68,7 +69,12 @@ class _YourMealScreenState extends State<YourMealScreen> {
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodInfoScreen(food: food)));
                         print('tap ${food.name}  ${food.id}');
-                      });
+                      },
+                    onAdd: ()async{
+                      FoodLog foodLog = FoodLog(userID: Provider.of<MyState>(context,listen: false).user.id, food: food);
+                      await DbHelper.createFoodLog(foodLog);
+                    },
+                  );
                 },
               ),
             ),

@@ -103,6 +103,7 @@ class _AddScreenState extends State<AddScreen> {
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodInfoScreen(food: food)));
                   }, onAdd: ()async{
                     FoodLog foodLog = FoodLog(userID: Provider.of<MyState>(context,listen: false).user.id, food: food);
+                    Provider.of<MyState>(context,listen: false).updateState();
                     await DbHelper.createFoodLog(foodLog);
               },);
             },

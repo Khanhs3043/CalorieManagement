@@ -4,8 +4,8 @@ import '../models/user.dart';
 
 class MyState with ChangeNotifier{
   mUser user = mUser(id: 'id');
-  bool _isChanged = false;
-  bool get isChanged => _isChanged;
+  bool isChanged = false;
+
 
   getUser(mUser u){
     print(u.id);
@@ -14,6 +14,7 @@ class MyState with ChangeNotifier{
     notifyListeners();
   }
   void updateState() {
+    isChanged = !isChanged;
     notifyListeners(); // Thông báo cho các widget nghe để rebuild
   }
 }

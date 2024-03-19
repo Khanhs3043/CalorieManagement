@@ -16,13 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int eaten = 0;
-  int remaining =0;
-  int burned = 0;
-  int protein = 0;
-  int carbs = 0;
-  int fats = 0;
-  int goal = 2000;
+
   var listFoodLog = [];
 
   @override
@@ -35,16 +29,25 @@ class _HomeScreenState extends State<HomeScreen> {
      listFoodLog = await DbHelper.getAllFoodLogs(Provider.of<MyState>(context,listen: false).user.id);
      setState(() {
      });
-     for(FoodLog i in listFoodLog){
-       carbs += i.carbs;
-       fats += i.fats;
-       protein += i.protein;
-       eaten += i.kcal;
-       remaining = goal -eaten+ burned;
-     }
+
   }
   @override
   Widget build(BuildContext context) {
+    int eaten = 0;
+    int remaining =0;
+    int burned = 0;
+    int protein = 0;
+    int carbs = 0;
+    int fats = 0;
+    int goal = 2000;
+    for(FoodLog i in listFoodLog){
+      carbs += i.carbs;
+      fats += i.fats;
+      protein += i.protein;
+      eaten += i.kcal;
+      remaining = goal -eaten+ burned;
+    }
+    bool state = Provider.of<MyState>(context).isChanged;
     return Consumer<MyUI>(
       builder: (BuildContext context, MyUI ui, Widget? child) {
       return Scaffold(
@@ -243,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 8,
                                   strokeCap: StrokeCap.round,
-                                  value: remaining/goal,
+                                  value: (goal - remaining)/goal,
                                   backgroundColor: Color(0xffadadae),
                                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xff84E291)),
                                 ),

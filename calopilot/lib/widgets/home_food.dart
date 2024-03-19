@@ -1,5 +1,6 @@
 import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
+import 'package:calopilot/provider/myState.dart';
 import 'package:calopilot/screens/foodLogInfoScreen.dart';
 import 'package:calopilot/services/dbHelper.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,8 @@ class HomeFood extends StatelessWidget {
                       TextButton(
                         onPressed: ()async {
                           await DbHelper.deleteFoodLog(foodLog.id);
+                          Provider.of<MyState>(context,listen: false).updateState();
+                          Navigator.of(context).pop();
                         },
                         child: Text('OK'),
                       ),

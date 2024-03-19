@@ -58,8 +58,11 @@ class _SearchItemState extends State<SearchItem2> {
                   GestureDetector(
                       onTap: (){
                         setState(() {
-                          widget.onAdd();
+
                           isAdd = isAdd? false: true;
+                          if(isAdd){
+                            widget.onAdd();
+                          }
                         });
                       },
                       child: isAdd?const Icon(Icons.check_circle,color: Color(

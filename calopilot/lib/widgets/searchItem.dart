@@ -7,7 +7,8 @@ class SearchItem extends StatefulWidget {
   String info;
   final Function onTap;
   final Function onDelete;
-  SearchItem({super.key, required this.title, required this.info, required this.onTap, required this.onDelete()});
+  final Function onAdd;
+  SearchItem({super.key, required this.title, required this.info, required this.onTap, required this.onDelete(),required this.onAdd});
 
   @override
   State<SearchItem> createState() => _SearchItemState();
@@ -82,6 +83,9 @@ class _SearchItemState extends State<SearchItem> {
                       setState(() {
 
                         isAdd = isAdd? false: true;
+                        if(isAdd){
+                          widget.onAdd();
+                        }
                       });
                     },
                       child: isAdd?const Icon(Icons.check_circle,color: Color(
