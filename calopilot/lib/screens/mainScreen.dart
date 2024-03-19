@@ -1,10 +1,8 @@
 import 'package:calopilot/models/myColor.dart';
+import 'package:calopilot/screens/profile.dart';
 import 'package:calopilot/screens/yourMealScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../models/user.dart';
-import 'addScreen.dart';
 import 'homeScreen.dart';
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,7 +13,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int selectedIndex = 0;
-  List screens = [HomeScreen(), YourMealScreen(),Container()];
+  List screens = [HomeScreen(), YourMealScreen(),MainProfile()];
   @override
 
   Widget build(BuildContext context) {

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 // ignore: unused_import
 import 'package:provider/provider.dart';
 // ignore: unused_import
@@ -6,16 +8,6 @@ import 'package:calopilot/models/myColor.dart';
 // ignore: unused_import
 import 'package:calopilot/screens/settingScreen.dart';
 
-class MyProfile extends StatelessWidget {
-  const MyProfile({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MainProfile(),
-    );
-  }
-}
 
 class MainProfile extends StatefulWidget {
   const MainProfile({super.key});
@@ -29,233 +21,214 @@ class _MainProfile extends State<MainProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Provider.of<MyUI>(context).color2,
       appBar: AppBar(
         backgroundColor: Provider.of<MyUI>(context).appBarColor,
-        toolbarHeight: 100.00,
-        title: SafeArea(
-          // ignore: avoid_unnecessary_containers
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: <Widget>[
-                const Icon(
-                  Icons.account_circle_rounded,
-                  color: Colors.white,
-                  size: 50,
+        foregroundColor: Colors.white,
+        title: const Text('username'),
+        leading: const Padding(
+          padding: EdgeInsets.only(left: 15),
+          child: Icon(Icons.account_circle,size: 40,),
+        ),
+        actions: [IconButton(onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingsScreen()));
+        }, icon:const Icon(Icons.settings,size: 35,))],
+      ),
+      body:  Padding(
+        padding:  const EdgeInsets.symmetric(horizontal: 20,vertical: 30),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Information',style: TextStyle(color: Colors.grey.shade600,fontSize: 18),),
+              const SizedBox(height: 5,),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Provider.of<MyUI>(context).color1,
+                  boxShadow: [BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: Offset(0,4)
+                  )]
                 ),
-                const SizedBox(width: 20),
-                const Text(
-                  'User Name', // DOI TEN VOI DATABASE O DAY
-                  style: TextStyle(color: Colors.white),
+                child: Padding(
+                  padding:  const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Name",style: TextStyle(fontSize: 18),),
+                          Text("username",style: TextStyle(fontSize: 18),),
+                        ],
+                      ),
+                      const SizedBox(height: 10,),
+                      Container(height: 1.2,color: Colors.grey.shade300,width: MediaQuery.sizeOf(context).width,),
+                      const SizedBox(height: 10,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Gender",style: TextStyle(fontSize: 18),),
+                          Text("Male",style: TextStyle(fontSize: 18),),
+                        ],
+                      ),
+                      const SizedBox(height: 10,),
+                      Container(height: 1.2,color: Colors.grey.shade300,width: MediaQuery.sizeOf(context).width,),
+                      const SizedBox(height: 10,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Age",style: TextStyle(fontSize: 18),),
+                          Text("18",style: TextStyle(fontSize: 18),),
+                        ],
+                      ),
+
+                    ],
+                  ),
                 ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SettingsScreen()),
-                    );
-                  },
-                  icon: const Icon(
-                      color: Colors.white,
-                      size: 50,
-                      IconData(
-                        0xe57f,
-                        fontFamily: 'MaterialIcons',
-                      )),
-                )
-              ],
-            ),
+              ),
+              const SizedBox(height: 20,),
+              Text('BMI',style: TextStyle(color: Colors.grey.shade600,fontSize: 18),),
+              const SizedBox(height: 5,),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Provider.of<MyUI>(context).color1,
+                    boxShadow: [BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: Offset(0,4)
+                    )]
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('BMI',style: TextStyle(fontSize: 18,color: Colors.grey),),
+                      Text('18.75',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,
+                          color: Color(0xff45b0e0)),),
+                      Text('Normal',style: TextStyle(fontSize: 18,color: Colors.grey),),
+                      Container(height: 1.2,color: Colors.grey.shade300,width: MediaQuery.sizeOf(context).width,),
+                      const SizedBox(height: 15,),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              children: [
+                                Text('160 cm',style: TextStyle(fontSize: 18),),
+                                Text('Height',style: TextStyle(fontSize: 14,color: Colors.grey),),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              children: [
+                                Text('48 kg',style: TextStyle(fontSize: 18),),
+                                Text('Weight',style: TextStyle(fontSize: 14,color: Colors.grey),),
+                              ],
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20,),
+              Text('Drink water',style: TextStyle(color: Colors.grey.shade600,fontSize: 18),),
+              const SizedBox(height: 5,),
+              Container(
+                padding: EdgeInsets.only(top: 20,bottom:20, left: 25),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Provider.of<MyUI>(context).color1,
+                    boxShadow: [BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: Offset(0,4)
+                    )]
+                ),
+                child: Row(
+                  children: [
+                     const Expanded(
+                      flex: 5,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text('1950 ', style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff45b0e0)
+                              ),),
+                              Text('ml', style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xff45b0e0)
+                              ),)
+                            ],
+                          ),
+                          Text('Daily goal drink water',style: TextStyle(color: Colors.grey),),
+                          const SizedBox(height: 3,),
+                          Row(children: [
+                            Icon(Icons.timer_sharp,color: Colors.grey,),
+                            Text('  Last drink: 11:11 AM',style: TextStyle(color: Colors.grey),),
+                          ],),
+                        ],
+                      ),
+
+
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Stack(
+                        alignment: Alignment.centerRight,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                IconButton(onPressed: (){},
+                                    icon: Icon(Icons.add_circle,size: 30,color: Colors.grey,)),
+                                IconButton(onPressed: (){},
+                                    icon: Icon(Icons.remove_circle,size: 30,color: Colors.grey))
+                              ],
+                            ),
+                          ),
+                          Transform.rotate(
+                            angle: 3.14*3/2,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20)
+                              ),
+                             
+                              height: 40,
+                              width: 100,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: const LinearProgressIndicator(
+                                  valueColor:AlwaysStoppedAnimation<Color>(Color(0xff45b0e0)) ,
+                                  value: 0.5,
+                                  minHeight: 40,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 60),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 4,
-                    offset: Offset(4, 8), // Shadow position
-                  ),
-                ],
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Information',
-                      style: TextStyle(fontSize: 30),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Name:'),
-                          Text('An Le'),
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      height: 0.1,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Gender:'),
-                          Text('Male'),
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      height: 0.1,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Age:'),
-                          Text('21'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 60),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 4,
-                    offset: Offset(4, 8), // Shadow position
-                  ),
-                ],
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'BMI',
-                      style: TextStyle(fontSize: 30),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('BMI:'),
-                          Text('20.9'),
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      height: 0.1,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Weight:'),
-                          Text('64kg'),
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      height: 0.1,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Height:'),
-                          Text('175cm'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 60),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 4,
-                    offset: Offset(4, 8), // Shadow position
-                  ),
-                ],
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'DrinkWater',
-                      style: TextStyle(fontSize: 30),
-                    ),
-                    Divider(
-                      height: 0.1,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Goal:'),
-                          Text('2200ml'),
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      height: 0.1,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Last Drink:'),
-                          Text('7 P.M'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      )
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
 import 'package:calopilot/provider/myState.dart';
 import 'package:calopilot/screens/addScreen.dart';
+import 'package:calopilot/screens/updateProfileScreen.dart';
 import 'package:calopilot/services/dbHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: FloatingActionButton(
             shape: const CircleBorder(),
           onPressed: ()async {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>AddScreen()));},
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddScreen()));},
+        //Navigator.push(context, MaterialPageRoute(builder: (context)=>const UpdateProfileScreen()));},
           backgroundColor: ui.color3,
           foregroundColor: const Color(0xffadadae),
           child: const Icon(Icons.add,size: 30,),

@@ -6,46 +6,114 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:  Provider.of<MyUI>(context).color2,
       appBar: AppBar(
+        foregroundColor: Colors.white,
         title: Text('Settings'),
         backgroundColor: Provider.of<MyUI>(context).appBarColor,
       ),
       body: Consumer<MyUI>(
         builder: (context, ui, child) {
-          return Container(
-            color: ui.isDark ? ui.color1 : ui.color2,
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const SizedBox(
+                  height: 30,
+                ),
+                Container(
+                  height: 60,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: ui.color1),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Dark Mode',
+                        "Darkmode",
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: ui.textColor,
-                        ),
+                            fontSize: 17, color:ui.color4),
                       ),
-                      Spacer(),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20.0),
-                          border: Border.all(
-                            color: Colors.grey[400]!,
-                            width: 2.0,
-                          ),
-                        ),
-                        child: Switch(
+                      Switch(
                           value: ui.isDark,
-                          onChanged: (value) {
+                          onChanged: (isDark) {
                             ui.switchTheme();
-                          },
-                        ),
-                      ),
+                          })
                     ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: 60,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: ui.color1),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Language",
+                        style: TextStyle(
+                            fontSize: 17, color: ui.color4),
+                      ),
+                      Switch(
+                          value: false,
+                          onChanged: (_) {
+
+                          })
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('You want to sign out ?'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+
+                                  },
+                                  child: Text('OK')),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Cancel'))
+                            ],
+                          );
+                        });
+                  },
+                  child: Container(
+                    height: 60,
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: ui.color1),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Log Out",
+                          style: TextStyle(
+                              fontSize: 17, color: ui.color4),
+                        ),
+                        const Icon(
+                          Icons.power_settings_new_outlined,
+                          color: Colors.red,
+                          size: 30,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],
