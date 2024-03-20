@@ -1,6 +1,8 @@
 import 'package:calopilot/provider/myState.dart';
 import 'package:calopilot/screens/forgotPwScreen.dart';
 import 'package:calopilot/screens/siginScreen.dart';
+import 'package:calopilot/screens/updateProfileScreen.dart';
+import 'package:calopilot/services/dbHelper.dart';
 import 'package:calopilot/widgets/tf_email.dart';
 import 'package:calopilot/widgets/tf_password.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -78,11 +80,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       emailController.text, passwordController.text);
 
                   if (user != null) {
-                    Provider.of<MyState>(context,listen:false).user.id = user.uid.toString();
+
+                    Provider.of<MyState>(context,listen:false).user = (await DbHelper.getUserById(user.uid.toString()))!;
                     ScaffoldMessenger.of(context,).showSnackBar(const SnackBar(
                       content: Text("Đã đăng nhập thành công."),
                     ));
-
+                    print(Provider.of<MyState>(context,listen:false).user.name);
+                    Provider.of<MyState>(context,listen:false).user.age==null?
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>UpdateProfileScreen())):
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => MainScreen()),);

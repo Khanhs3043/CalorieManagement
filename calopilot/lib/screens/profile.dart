@@ -1,3 +1,4 @@
+import 'package:calopilot/services/calculator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,6 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:calopilot/models/myColor.dart';
 // ignore: unused_import
 import 'package:calopilot/screens/settingScreen.dart';
+
+import '../models/user.dart';
+import '../provider/myState.dart';
 
 
 class MainProfile extends StatefulWidget {
@@ -20,12 +24,15 @@ class MainProfile extends StatefulWidget {
 class _MainProfile extends State<MainProfile> {
   @override
   Widget build(BuildContext context) {
+    mUser user = Provider.of<MyState>(context,listen: false).user;
+    print(user.name);
+    print(user.gender);
     return Scaffold(
       backgroundColor: Provider.of<MyUI>(context).color2,
       appBar: AppBar(
         backgroundColor: Provider.of<MyUI>(context).appBarColor,
         foregroundColor: Colors.white,
-        title: const Text('username'),
+        title:  Text('${Provider.of<MyState>(context,listen:false).user.name}'),
         leading: const Padding(
           padding: EdgeInsets.only(left: 15),
           child: Icon(Icons.account_circle,size: 40,),
@@ -60,7 +67,7 @@ class _MainProfile extends State<MainProfile> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Name",style: TextStyle(fontSize: 18),),
-                          Text("username",style: TextStyle(fontSize: 18),),
+                          Text("${user.name}",style: TextStyle(fontSize: 18),),
                         ],
                       ),
                       const SizedBox(height: 10,),
@@ -70,7 +77,7 @@ class _MainProfile extends State<MainProfile> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Gender",style: TextStyle(fontSize: 18),),
-                          Text("Male",style: TextStyle(fontSize: 18),),
+                          Text("${user.gender}",style: TextStyle(fontSize: 18),),
                         ],
                       ),
                       const SizedBox(height: 10,),
@@ -80,7 +87,7 @@ class _MainProfile extends State<MainProfile> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Age",style: TextStyle(fontSize: 18),),
-                          Text("18",style: TextStyle(fontSize: 18),),
+                          Text("${user.age}",style: TextStyle(fontSize: 18),),
                         ],
                       ),
 
@@ -107,7 +114,7 @@ class _MainProfile extends State<MainProfile> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text('BMI',style: TextStyle(fontSize: 18,color: Colors.grey),),
-                      Text('18.75',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,
+                      Text('${Calculator.calculateBMI(user.weight!, user.height!).toStringAsFixed(2)}',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,
                           color: Color(0xff45b0e0)),),
                       Text('Normal',style: TextStyle(fontSize: 18,color: Colors.grey),),
                       Container(height: 1.2,color: Colors.grey.shade300,width: MediaQuery.sizeOf(context).width,),
@@ -119,7 +126,7 @@ class _MainProfile extends State<MainProfile> {
                             child: Column(
                               children: [
                                 Text('160 cm',style: TextStyle(fontSize: 18),),
-                                Text('Height',style: TextStyle(fontSize: 14,color: Colors.grey),),
+                                Text('${user.height}',style: TextStyle(fontSize: 14,color: Colors.grey),),
                               ],
                             ),
                           ),
@@ -128,7 +135,7 @@ class _MainProfile extends State<MainProfile> {
                             child: Column(
                               children: [
                                 Text('48 kg',style: TextStyle(fontSize: 18),),
-                                Text('Weight',style: TextStyle(fontSize: 14,color: Colors.grey),),
+                                Text('${user.weight}',style: TextStyle(fontSize: 14,color: Colors.grey),),
                               ],
                             ),
                           )

@@ -8,6 +8,7 @@ import 'package:calopilot/screens/updateProfileScreen.dart';
 import 'package:calopilot/services/dbHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/goal.dart';
 import '../widgets/home_food.dart';
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -19,7 +20,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var listExLog = [];
   var listFoodLog = [];
-  int goal = 2000;
+  var goal ;
+  int remaining =0;
+  int eaten = 0;
+  int burned = 0;
+  int protein = 0;
+  int carbs = 0;
+  int fats = 0;
   @override
   didChangeDependencies(){
     super.didChangeDependencies();
@@ -28,26 +35,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   Future  getYourFoodLogs()async{
      listFoodLog = await DbHelper.getAllFoodLogs(Provider.of<MyState>(context,listen: false).user.id);
+     goal = await DbHelper.getGoal(Provider.of<MyState>(context,listen: false).user.id);
+
      setState(() {
      });
 
   }
   @override
   Widget build(BuildContext context) {
-    int eaten = 0;
-    int remaining =0;
-    int burned = 0;
-    int protein = 0;
-    int carbs = 0;
-    int fats = 0;
+    remaining =0;
+     eaten = 0;
+     burned = 0;
+     protein = 0;
+     carbs = 0;
+     fats = 0;
 
     for(FoodLog i in listFoodLog){
       carbs += i.carbs;
       fats += i.fats;
       protein += i.protein;
       eaten += i.kcal;
-      remaining = goal -eaten+ burned;
     }
+    remaining = goal.kcal - eaten+ burned;
     bool state = Provider.of<MyState>(context).isChanged;
     return Consumer<MyUI>(
       builder: (BuildContext context, MyUI ui, Widget? child) {
@@ -62,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: const Icon(Icons.add,size: 30,),
         ),
         backgroundColor: Colors.transparent,
-        body: Stack(
+        body: goal==null?const Center(child: CircularProgressIndicator(),):Stack(
           children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -320,7 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 8,
                                   strokeCap: StrokeCap.round,
-                                  value: (goal - remaining)/goal,
+                                  value: (goal.kcal - remaining)/goal.kcal,
                                   backgroundColor: Color(0xffadadae),
                                   valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff84E291)),
                                 ),

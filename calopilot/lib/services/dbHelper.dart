@@ -9,6 +9,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/food.dart';
 import '../models/foodLog.dart';
+import '../models/goal.dart';
+import '../models/user.dart';
 
 class DbHelper{
 
@@ -132,6 +134,98 @@ class DbHelper{
       PRIMARY KEY("id" AUTOINCREMENT)
     ) ''');
 
+  }
+  //about user-----------------------------------------------------------------------------------------------
+  static Future createUser(mUser user)async{
+    final db = await DbHelper.mDatabase();
+    try{
+      print(user.id);
+      final data = {
+        'id': user.id,
+        'name' : user.name,
+        'gender' : user.gender,
+        'height': user.height,
+        'weight': user.weight,
+        'age': user.age,
+      };
+      await db.insert('users', data,
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }catch(e){
+      print(e);
+    }
+
+  }
+
+  static Future<mUser?> getUserById(String id)async{
+    final db = await DbHelper.mDatabase();
+    List<Map<String, dynamic>> data = await db.query('users',where: 'id = ?', whereArgs: [id]);
+    if (data.isNotEmpty) {
+      var user = data.first;
+      return mUser(
+        id: user["id"] ,
+        name: user["name"] ,
+        gender: user["gender"] ,
+        age: user["age"],
+        height: user["height"],
+        weight: user["weight"],
+      );
+    } else {// Trả về một đối tượng Food rỗng nếu không tìm thấy
+      return null;
+    }
+
+  }
+  static Future<void> updateUser(mUser user) async {
+    final Database db = await DbHelper.mDatabase();
+    // Cập nhật thông tin người dùng trong cơ sở dữ liệu
+    await db.update(
+      'users',
+      user.toMap(),
+      where: 'id = ?',
+      whereArgs: [user.id],
+    );
+    print(user.gender);
+    print('Updateted');
+  }
+  //about goal-----------------------------------------------------------
+  static Future <int>createGoal(String userId, Goal goal)async{
+    final db = await DbHelper.mDatabase();
+      final data = {
+        'userId': userId,
+        'weightGoal': goal.weightGoal,
+        'kcal': goal.kcal,
+        'carbs': goal.carbs,
+        'fats': goal.fats,
+        'protein': goal.protein,
+        'water': goal.waterGoal,
+      };
+      var id = await db.insert('targetSettings', data,
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+  static Future<void> updateGoal(Goal goal) async {
+    final Database db = await DbHelper.mDatabase();
+    await db.update(
+      'targetSettings',
+      goal.toMap(),
+      where: 'id = ?',
+      whereArgs: [goal.id],
+    );
+  }
+  static Future<Goal> getGoal(String userId) async {
+    final Database db = await DbHelper.mDatabase();
+    List<Map<String, dynamic>> data = await db.query('targetSettings',where: 'userID = ?', whereArgs: [userId]);
+    var goal = data.first;
+    return Goal(
+      userId: userId,
+      id: goal["id"],
+      weightGoal: goal["weightGoal"],
+      carbs: goal["carbs"],
+      fats: goal["fats"],
+      protein: goal["protein"],
+      waterGoal: goal["water"],
+      kcal: goal["kcal"],
+    );
   }
 // about food------------------------------------------------
   static Future<int> createFood(Food food) async {
