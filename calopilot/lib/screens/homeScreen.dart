@@ -1,4 +1,7 @@
 
+import 'dart:async';
+
+import 'package:calopilot/models/exLog.dart';
 import 'package:calopilot/models/food.dart';
 import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
@@ -20,43 +23,57 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var listExLog = [];
   var listFoodLog = [];
-  var goal ;
-  int remaining =0;
-  int eaten = 0;
-  int burned = 0;
-  int protein = 0;
-  int carbs = 0;
-  int fats = 0;
+  var goal =2000 ;
+  var mGoal ;
+
   @override
   didChangeDependencies(){
     super.didChangeDependencies();
     getYourFoodLogs();
-
+    getYourExLogs();
+    getGoal();
+  }
+  Future getGoal()async{
+     mGoal = await DbHelper.getGoal(Provider.of<MyState>(context,listen: false).user.id);
+     goal = mGoal.kcal>0?mGoal.kcal:goal;
+     setState(() {
+     });
   }
   Future  getYourFoodLogs()async{
      listFoodLog = await DbHelper.getAllFoodLogs(Provider.of<MyState>(context,listen: false).user.id);
-     goal = await DbHelper.getGoal(Provider.of<MyState>(context,listen: false).user.id);
+     // mGoal = await DbHelper.getGoal(Provider.of<MyState>(context,listen: false).user.id);
+     // goal = mGoal.kcal>0?mGoal.kcal:1;
+     // listExLog = await DbHelper.getAllExerciseLogs(Provider.of<MyState>(context,listen: false).user.id);
 
      setState(() {
      });
 
   }
+  Future  getYourExLogs()async{
+    listExLog = await DbHelper.getAllExerciseLogs(Provider.of<MyState>(context,listen: false).user.id);
+    //goal = await DbHelper.getGoal(Provider.of<MyState>(context,listen: false).user.id);
+
+    setState(() {
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    remaining =0;
-     eaten = 0;
-     burned = 0;
-     protein = 0;
-     carbs = 0;
-     fats = 0;
-
+    int remaining =1;
+    int eaten = 0;
+    int burned = 0;
+    int protein = 0;
+    int carbs = 0;
+    int fats = 0;
     for(FoodLog i in listFoodLog){
       carbs += i.carbs;
       fats += i.fats;
       protein += i.protein;
       eaten += i.kcal;
     }
-    remaining = goal.kcal - eaten+ burned;
+    for(ExerciseLog i in listExLog){
+      burned += int.parse(i.kcal.toString());
+    }
+    remaining = goal - eaten+ burned;
     bool state = Provider.of<MyState>(context).isChanged;
     return Consumer<MyUI>(
       builder: (BuildContext context, MyUI ui, Widget? child) {
@@ -71,7 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: const Icon(Icons.add,size: 30,),
         ),
         backgroundColor: Colors.transparent,
-        body: goal==null?const Center(child: CircularProgressIndicator(),):Stack(
+        body: //mGoal==null?const Center(child: CircularProgressIndicator(),):
+        Stack(
           children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -215,58 +233,66 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),),
                         Column(
                             children:listExLog.map(
-                                    (exLog) => Stack(
-                                      alignment: Alignment.centerRight,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(exLog.food.name,style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Provider.of<MyUI>(context).color4,
-                                                ),),
-                                                Text(
-                                                  "${exLog.quantity}min - ${exLog.kcal} kcal",
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Color(0xffadadae),
+                                    (exLog) => Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      padding: EdgeInsets.only(top: 10,bottom: 10,left: 20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.white
+                                      ),
+                                      child: Stack(
+                                        alignment: Alignment.centerRight,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(exLog.exercise.name,style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Provider.of<MyUI>(context).color4,
                                                   ),),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        IconButton(onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text("Notify"),
-                                                content: const Text("You want to delete?"),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: ()async {
-                                                      await DbHelper.deleteFoodLog(exLog.id);
-                                                      Provider.of<MyState>(context,listen: false).updateState();
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('OK'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('Cancel'),
-                                                  ),
+                                                  Text(
+                                                    "${exLog.duration}min - ${exLog.kcal} kcal",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Color(0xffadadae),
+                                                    ),),
                                                 ],
-                                              );
-                                            },
-                                          );
+                                              ),
+                                            ],
+                                          ),
+                                          IconButton(onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text("Notify"),
+                                                  content: const Text("You want to delete?"),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: ()async {
+                                                        await DbHelper.deleteFoodLog(exLog.id);
+                                                        Provider.of<MyState>(context,listen: false).updateState();
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('OK'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('Cancel'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
 
-                                        }, icon: Icon(Icons.cancel_rounded,size: 25,color: Color(0xffadadae),),)
-                                      ],
+                                          }, icon: Icon(Icons.cancel_rounded,size: 25,color: Color(0xffadadae),),)
+                                        ],
+                                      ),
                                     ),).toList()),
                       ],
                     ),
@@ -329,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 8,
                                   strokeCap: StrokeCap.round,
-                                  value: (goal.kcal - remaining)/goal.kcal,
+                                  value: (goal - remaining)/goal,
                                   backgroundColor: Color(0xffadadae),
                                   valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff84E291)),
                                 ),

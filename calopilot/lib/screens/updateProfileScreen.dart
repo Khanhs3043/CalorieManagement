@@ -20,8 +20,8 @@ class UpdateProfileScreen extends StatefulWidget {
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   String selected = "Maintain weight";
-  var age;
-  var height, weight;
+  var age=0;
+  var height=0.0, weight=0.0;
   var gender = 'female';
   var activityLevel = 'low';
   var selectedDate = DateTime.now();

@@ -192,7 +192,7 @@ class DbHelper{
       final data = {
         'userId': userId,
         'weightGoal': goal.weightGoal,
-        'kcal': goal.kcal,
+        'kcal': int.parse(goal.kcal.toString()),
         'carbs': goal.carbs,
         'fats': goal.fats,
         'protein': goal.protein,
@@ -216,6 +216,7 @@ class DbHelper{
     final Database db = await DbHelper.mDatabase();
     List<Map<String, dynamic>> data = await db.query('targetSettings',where: 'userID = ?', whereArgs: [userId]);
     var goal = data.first;
+    print(goal);
     return Goal(
       userId: userId,
       id: goal["id"],
@@ -224,7 +225,7 @@ class DbHelper{
       fats: goal["fats"],
       protein: goal["protein"],
       waterGoal: goal["water"],
-      kcal: goal["kcal"],
+      kcal: int.parse(goal["kcal"].toString()),
     );
   }
 // about food------------------------------------------------
@@ -343,7 +344,6 @@ class DbHelper{
     for (var i in listFoodLogs){
       i.calc();
     }
-    print(listFoodLogs.length);
     return listFoodLogs;
   }
   static Future<int> createFoodLog(FoodLog foodLog) async {
@@ -478,5 +478,43 @@ class DbHelper{
     } catch (err) {
       debugPrint("Co loi khi xoa exercise: $err");
     }
+  }
+  // about exercise log ----------------------------------------------------------------------------------
+  static Future<List<ExerciseLog>> getAllExerciseLogs(String userId) async {
+    List<ExerciseLog> listExLogs = [];
+    final db = await DbHelper.mDatabase();
+    List<Map<String, dynamic>> data = await db.query('exerciseLogs', where: "userID = ?", whereArgs: [userId]);
+    for (var exLog in data) {
+      listExLogs.add(ExerciseLog(
+        id: exLog["id"],
+        duration: exLog["duration"],
+        kcal: exLog["kcal"],
+        exercise: await DbHelper.getExerciseById(exLog["exerciseId"]),
+        recordAt: exLog["recordAt"] != null ? DateTime.fromMillisecondsSinceEpoch(exLog["recordAt"]) : null,
+        userId: exLog["userID"].toString(),
+      ));
+    }
+    return listExLogs;
+  }
+  static Future<void> deleteExerciseLog(int id) async {
+    final db = await DbHelper.mDatabase();
+    try {
+      await db.delete('ExerciseLogs', where: "id = ?", whereArgs: [id]);
+    } catch (err) {
+      debugPrint("Co loi khi xoa exercise: $err");
+    }
+  }
+  static Future<int> createExerciseLog(ExerciseLog exLog) async {
+    final db = await DbHelper.mDatabase();
+    final data = {
+      'duration': exLog.duration,
+      'kcal': exLog.kcal,
+      'exerciseId': exLog.exercise.id,
+      'recordAt': exLog.recordAt?.millisecondsSinceEpoch,
+      'userID': exLog.userId,
+    };
+    final id = await db.insert('exerciseLogs', data,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
   }
 }

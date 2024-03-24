@@ -8,6 +8,7 @@ class FirebaseAuthService {
     try {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
           email: strEmail, password: strPassword);
+      print("hiih");
       return credential.user;
     } catch (err) {
       print("Co loi tao user: $err");

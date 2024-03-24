@@ -1,3 +1,4 @@
+import 'package:calopilot/models/exLog.dart';
 import 'package:calopilot/models/foodLog.dart';
 import 'package:calopilot/models/myColor.dart';
 import 'package:calopilot/provider/myState.dart';
@@ -179,7 +180,12 @@ class _AddScreenState extends State<AddScreen> {
                         });
                       },
                       onAdd: ()async{
-                        //await DbHelper.a
+
+                        await DbHelper.createExerciseLog(ExerciseLog(
+                            userId: Provider.of<MyState>(context,listen: false).user.id,
+                            exercise: exercise));
+                        state.isChanged = true;
+                        state.updateState();
                       },
                     onDelete: () async{
                         await DbHelper.deleteExercise(exercise.id);
